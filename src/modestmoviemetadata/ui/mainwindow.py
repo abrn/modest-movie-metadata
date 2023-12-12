@@ -146,26 +146,26 @@ class MainWindow(QMainWindow):
             | QDialogButtonBox.StandardButtons.Help
         )
 
-        self.aboutButton = self.buttonBox.button(
+        self.aboutButton: QPushButton = self.buttonBox.button(
             QDialogButtonBox.StandardButton.Help
-        )  # type: QPushButton
+        )
         self.aboutButton.clicked.connect(self.aboutButtonClicked)
         self.aboutButton.setText("About")
 
-        self.resetButton = self.buttonBox.button(
+        self.resetButton: QPushButton = self.buttonBox.button(
             QDialogButtonBox.StandardButton.Reset
-        )  # type: QPushButton
+        )
         self.resetButton.clicked.connect(self.resetButtonClicked)
 
-        self.copyButton = self.buttonBox.button(
+        self.copyButton: QPushButton = self.buttonBox.button(
             QDialogButtonBox.StandardButton.Apply
-        )  # type: QPushButton
+        )
         self.copyButton.setText("&Copy")
         self.copyButton.clicked.connect(self.copyButtonClicked)
 
-        self.getButton = self.buttonBox.button(
+        self.getButton: QPushButton = self.buttonBox.button(
             QDialogButtonBox.StandardButton.Open
-        )  # type: QPushButton
+        )
         self.getButton.setText("&Get")
         self.getButton.clicked.connect(self.getButtonClicked)
 
