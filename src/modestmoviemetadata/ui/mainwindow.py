@@ -23,7 +23,6 @@ from .selectrecord import SelectRecord
 from .fancylineedit import FancyLineEdit
 from .narrowspinbox import NarrowSpinbox
 from ..config import application_name
-from ..tools.audiotools import play_sound
 from ..tools.logtools import get_logger
 from ..tools.movieinfo import fetch_movie_info, MovieInfo, sanitise_title, get_imdb
 from ..tools.utilities import program_icon_path, video_folder_path
@@ -273,10 +272,8 @@ class MainWindow(QMainWindow):
 
         if len(movie_infos) == 1:
             movie_info = movie_infos[0]
-            self.playSound("choh.mp3")
 
         elif len(movie_infos) > 1:
-            self.playSound("brrr.mp3")
             selectRecord = SelectRecord(movie_infos=movie_infos, parent=self)
             if selectRecord.exec():
                 movie_info = movie_infos[selectRecord.row]
@@ -309,9 +306,3 @@ class MainWindow(QMainWindow):
         self.progressBar.setRange(0, 1)
         logger.debug("Error getting movie information")
         logger.error("%s: %s", exception.__class__.__name__, str(exception))
-        self.playSound("error.mp3")
-
-    @Slot(str)
-    def playSound(self, sound: str) -> None:
-        logger.debug("Using Qt to play audio")
-        play_sound(soundfile=sound)
