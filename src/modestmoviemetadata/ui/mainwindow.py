@@ -2,30 +2,31 @@
 # SPDX - License - Identifier: GPL-3.0-or-later
 
 
-from qtpy.QtCore import QObject, QSize, QThreadPool, QTimer, Slot
+from qtpy.QtCore import Slot, QObject, QThreadPool, QTimer, QSize
 from qtpy.QtGui import QGuiApplication, QIcon, QPixmap
+
 from qtpy.QtWidgets import (
-    QDialogButtonBox,
-    QGridLayout,
-    QHBoxLayout,
-    QLabel,
     QMainWindow,
-    QProgressBar,
     QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
     QWidget,
+    QDialogButtonBox,
+    QPushButton,
+    QProgressBar,
+    QLabel,
 )
 
-from ..config import application_name
-from ..tools.audiotools import play_sound
-from ..tools.logtools import get_logger
-from ..tools.movieinfo import MovieInfo, fetch_movie_info, get_imdb, sanitise_title
-from ..tools.utilities import program_icon_path, video_folder_path
-from ..tools.viewutils import boxBorderColor
 from .aboutdialog import AboutDialog
 from .appthreading import Worker
+from .selectrecord import SelectRecord
 from .fancylineedit import FancyLineEdit
 from .narrowspinbox import NarrowSpinbox
-from .selectrecord import SelectRecord
+from ..config import application_name
+from ..tools.logtools import get_logger
+from ..tools.movieinfo import fetch_movie_info, MovieInfo, sanitise_title, get_imdb
+from ..tools.utilities import program_icon_path, video_folder_path
+from ..tools.viewutils import boxBorderColor
 
 logger = get_logger()
 
@@ -35,6 +36,7 @@ class MainWindow(QMainWindow):
         self,
         parent: QObject = None,
     ) -> None:
+
         super().__init__(parent)
 
         self.setWindowTitle(application_name)
@@ -144,18 +146,26 @@ class MainWindow(QMainWindow):
             | QDialogButtonBox.StandardButtons.Help
         )
 
-        self.aboutButton = self.buttonBox.button(QDialogButtonBox.StandardButton.Help)
+        self.aboutButton: QPushButton = self.buttonBox.button(
+            QDialogButtonBox.StandardButton.Help
+        )
         self.aboutButton.clicked.connect(self.aboutButtonClicked)
         self.aboutButton.setText("About")
 
-        self.resetButton = self.buttonBox.button(QDialogButtonBox.StandardButton.Reset)
+        self.resetButton: QPushButton = self.buttonBox.button(
+            QDialogButtonBox.StandardButton.Reset
+        )
         self.resetButton.clicked.connect(self.resetButtonClicked)
 
-        self.copyButton = self.buttonBox.button(QDialogButtonBox.StandardButton.Apply)
+        self.copyButton: QPushButton = self.buttonBox.button(
+            QDialogButtonBox.StandardButton.Apply
+        )
         self.copyButton.setText("&Copy")
         self.copyButton.clicked.connect(self.copyButtonClicked)
 
-        self.getButton = self.buttonBox.button(QDialogButtonBox.StandardButton.Open)
+        self.getButton: QPushButton = self.buttonBox.button(
+            QDialogButtonBox.StandardButton.Open
+        )
         self.getButton.setText("&Get")
         self.getButton.clicked.connect(self.getButtonClicked)
 
@@ -262,10 +272,8 @@ class MainWindow(QMainWindow):
 
         if len(movie_infos) == 1:
             movie_info = movie_infos[0]
-            self.playSound("choh.mp3")
 
         elif len(movie_infos) > 1:
-            self.playSound("brrr.mp3")
             selectRecord = SelectRecord(movie_infos=movie_infos, parent=self)
             if selectRecord.exec():
                 movie_info = movie_infos[selectRecord.row]
@@ -298,9 +306,3 @@ class MainWindow(QMainWindow):
         self.progressBar.setRange(0, 1)
         logger.debug("Error getting movie information")
         logger.error("%s: %s", exception.__class__.__name__, str(exception))
-        self.playSound("error.mp3")
-
-    @Slot(str)
-    def playSound(self, sound: str) -> None:
-        logger.debug("Using Qt to play audio")
-        play_sound(soundfile=sound)
